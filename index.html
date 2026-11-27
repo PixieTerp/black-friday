@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real Deal or Fake Deal?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: friendly detective work for credit-recovery students; short sentences, big targets.
+   IDEA: a store price tag that students "flip" to see the real price history.
+   PICTURE: a big red sale tag with a question mark; every product has its own price chart.
+   COLOUR and TYPE: white paper, black ink, sale-tag red, winter blue; Archivo heavy for prices.
+   LAYOUT: one phone column; tabs for Part 1, Part 2, Submit; cards stacked. */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1418);--ink:light-dark(#141414,#f1f3f5);--mute:light-dark(#5b6168,#a7b0b8);--red:light-dark(#d7261e,#ff5a4f);--blue:light-dark(#1f5f8b,#7cc0ee);--panel:light-dark(#eef3f7,#18222b);--line:light-dark(#d6dde3,#2c3a46);--ok:light-dark(#1d7a3a,#5fd38a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:760px;margin:0 auto;padding:0 max(4vw,14px)}
+.std{background:#174a6d;color:#dbe9f3;font-size:13px;line-height:1.4;padding:7px 0}
+.hero{background:var(--blue);color:#fff;padding:22px 0 26px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:center}
+h1{font:900 clamp(32px,7vw,48px)/1.05 Archivo,sans-serif;margin:0 0 8px;text-wrap:balance}
+.hero p{margin:0;font-size:16px;opacity:.95}
+.hero svg{width:100%;height:auto;max-height:220px}
+@media(max-width:600px){.hero .wrap{grid-template-columns:1fr}.hero svg{max-height:170px}}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;padding-top:8px;padding-bottom:8px}
+nav a{flex:1;text-align:center;padding:11px 6px;border-radius:10px;font-weight:800;color:var(--ink);text-decoration:none;min-height:44px;font-size:15px}
+nav a.on{background:var(--ink);color:var(--bg)}
+.rule{background:var(--panel);border-radius:14px;padding:16px 18px;margin:18px 0}
+.rule h2{font:800 20px/1.2 Archivo;margin:0 0 6px}
+.rule p{margin:6px 0}
+.formula{font-weight:800;font-size:18px;background:var(--bg);border-radius:10px;padding:10px 12px;margin:8px 0;border:2px dashed var(--line)}
+.card{border:2px solid var(--line);border-radius:16px;padding:16px;margin:18px 0}
+.card h3{font:800 20px/1.2 Archivo;margin:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{background:var(--red);color:#fff;font-weight:800;padding:6px 12px 6px 18px;border-radius:6px 22px 22px 6px;white-space:nowrap;font-size:15px}
+.tag s{opacity:.85;font-weight:600}
+.fig{position:relative;height:210px;margin:12px 0 4px}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.note{font-size:13px;color:var(--mute);margin:0 0 10px}
+.q{margin:12px 0;display:grid;gap:6px}
+.q label,.q .lab{font-weight:600}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=number],input[type=text],textarea{font:16px Archivo,sans-serif;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);min-height:44px}
+input[type=number]{width:9em}
+textarea{width:100%;min-height:90px}
+input:focus-visible,textarea:focus-visible,button:focus-visible,nav a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.pick{display:flex;gap:8px;flex-wrap:wrap}
+.pick label{position:relative}
+.pick input{position:absolute;opacity:0;inset:0}
+.pick span{display:inline-block;padding:10px 16px;border:2px solid var(--line);border-radius:999px;font-weight:700;min-height:44px;cursor:pointer}
+.pick input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pick input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+button{font:800 16px Archivo,sans-serif;padding:12px 18px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);min-height:44px;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.fb{margin-top:10px}
+.fb div{padding:4px 0}
+.y{color:var(--ok);font-weight:700}.n{color:var(--red);font-weight:700}
+.sum{border:3px solid var(--ink);border-radius:16px;padding:18px;margin:18px 0;background:var(--bg)}
+.sum h2{font:900 24px/1.1 Archivo;margin:0 0 4px}
+.big{font:900 clamp(40px,10vw,60px)/1 Archivo;color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:10px}
+th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+td.r,th.r{text-align:right}
+.facts li{margin:6px 0}
+a{color:var(--blue)}
+footer{color:var(--mute);font-size:13px;padding:20px 0 40px}
+[hidden]{display:none!important}
+.inv{border:3px solid var(--blue);border-radius:16px;padding:16px 18px;margin:18px 0}
+.inv h2{font:900 24px/1.15 Archivo;margin:0 0 4px}
+.bonus{display:inline-block;background:var(--red);color:#fff;font-weight:800;border-radius:999px;padding:2px 10px;font-size:14px;vertical-align:middle}
+.orange{color:#e8710a;font:900 clamp(26px,6.5vw,36px)/1.15 Archivo,sans-serif;margin:18px 0 10px;text-wrap:balance}
+#copy{background:#e8710a;color:#fff;font-size:20px;padding:14px 22px;min-height:54px}
+#calcBtn{position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:20;width:60px;height:60px;border-radius:50%;padding:0;background:var(--red);color:#fff;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+#calc{position:fixed;right:16px;bottom:88px;z-index:20;width:min(300px,calc(100vw - 32px));background:var(--bg);border:3px solid var(--ink);border-radius:18px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#calc .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:800;cursor:move;touch-action:none;user-select:none}
+#calc .bar button{padding:6px 12px;min-height:36px;background:transparent;color:var(--ink);border:2px solid var(--line)}
+#cExpr{font-size:15px;color:var(--mute);text-align:right;min-height:22px;overflow-wrap:anywhere}
+#cOut{font:900 30px/1.2 Archivo,sans-serif;text-align:right;padding:4px 2px 10px;overflow-wrap:anywhere}
+#keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#keys button{padding:0;min-height:48px;font-size:19px;background:var(--panel);color:var(--ink)}
+#keys button.op{background:var(--blue);color:#fff}
+#keys button.eq{background:var(--red);color:#fff}
+@media(prefers-reduced-motion:no-preference){.card.done{animation:pop .35s ease}@keyframes pop{50%{transform:scale(1.015)}}}
+</style>
+</head>
+<body>
+<div class="std"><div class="wrap">Standards (NVACS / CCSD): 7.RP.A.3 percent problems, markups &amp; markdowns, percent increase &amp; decrease · HSF-IF.B.4 key features of graphs · HSN-Q.A.1 units &amp; graph scale · HSS-IC.B.6 evaluate reports based on data</div></div>
+<header class="hero"><div class="wrap">
+  <div>
+    <h1>Real deal or fake deal?</h1>
+    <p>Black Friday price detective. Do stores raise prices first, then "discount" them? Use the math to decide.</p>
+  </div>
+  <svg viewBox="0 0 300 200" role="img" aria-label="A red sale tag with a question mark">
+    <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff5148"/><stop offset="1" stop-color="#c41d16"/></linearGradient></defs>
+    <g fill="#fff" opacity=".8"><circle cx="30" cy="30" r="3"/><circle cx="270" cy="25" r="4"/><circle cx="250" cy="170" r="3"/><circle cx="20" cy="160" r="4"/><circle cx="150" cy="12" r="2.5"/><circle cx="285" cy="100" r="2.5"/></g>
+    <path d="M60 48h150l55 52-55 52H60a12 12 0 0 1-12-12V60a12 12 0 0 1 12-12z" fill="#0b3350" opacity=".35" transform="translate(6 8)"/>
+    <path d="M60 48h150l55 52-55 52H60a12 12 0 0 1-12-12V60a12 12 0 0 1 12-12z" fill="url(#g)"/>
+    <circle cx="225" cy="100" r="9" fill="#1f5f8b"/><path d="M225 100 C255 60 285 70 292 40" stroke="#fff" stroke-width="3" fill="none"/>
+    <text x="70" y="82" fill="#fff" font-family="Archivo" font-weight="600" font-size="18">WAS <tspan text-decoration="line-through">$140</tspan></text>
+    <text x="70" y="128" fill="#fff" font-family="Archivo" font-weight="900" font-size="40">$70</text>
+    <text x="160" y="128" fill="#ffe7e5" font-family="Archivo" font-weight="900" font-size="40">?</text>
+  </svg>
+</div></header>
+
+<nav><div class="wrap">
+  <a href="#part1" data-v="part1">Part 1</a>
+  <a href="#part2" data-v="part2">Part 2</a>
+  <a href="#submit" data-v="submit">Submit</a>
+</div></nav>
+
+<main class="wrap">
+  <section id="v-part1">
+    <div class="inv">
+      <h2>You are the investigator</h2>
+      <p style="margin:0 0 6px">Stores say "SALE!" Your job: check the math and catch the fakes. First, sign in. <span class="bonus">+1 point</span></p>
+      <div class="q"><label for="nm">Your first and last name</label><input type="text" id="nm" autocomplete="name"></div>
+      <div class="q"><span class="lab">Pick your class</span><div class="pick" id="clsPick"></div></div>
+      <div class="q" id="otherQ" hidden><label for="clsOther">Other: type your class name</label><input type="text" id="clsOther" placeholder="Example: Math Core, English 10…"></div>
+    </div>
+    <div class="rule">
+      <h2>Part 1 rules</h2>
+      <p><b>Percent off</b> = how much you save, out of the starting price.</p>
+      <div class="formula">% off = (old price − new price) ÷ old price × 100</div>
+      <p><b>Advertised % off:</b> use the "Was" price on the red tag.</p>
+      <p><b>Real % off:</b> use the <b>Nov 1</b> price on the chart. That is the regular price before the Black Friday hype.</p>
+      <p><b>Real deal</b> = the real % off is <b>10% or more</b>. Less than that is a <b>fake deal</b>.</p>
+      <p class="note">Round to one decimal place, like 6.7.</p>
+    </div>
+    <div id="list1"></div>
+  </section>
+
+  <section id="v-part2" hidden>
+    <div class="rule">
+      <h2>Part 2 rules: harder</h2>
+      <p>Real price trackers compare the sale price to the <b>lowest price before the sale</b>. Now you do too.</p>
+      <div class="formula">real % off = (lowest price before − Black Friday price) ÷ lowest price before × 100</div>
+      <p>If the Black Friday price is <b>higher</b> than the lowest price, your answer is <b>negative</b>. Example: −20 means you paid 20% MORE.</p>
+      <p><b>Real deal</b> = 10% or more. Anything else is a <b>fake deal</b>.</p>
+    </div>
+    <div id="list2"></div>
+  </section>
+
+  <section id="v-submit" hidden>
+    <div class="rule">
+      <h2>Finish and submit</h2>
+      <p>Answer the big question, then copy your card into <b>Session Activity 1</b> in Canvas. Your name and class are at the top of Part 1.</p>
+    </div>
+    <div class="q"><span class="lab">Big question: Do some companies raise prices before Black Friday so the sale looks bigger?</span>
+      <div class="pick"><label><input type="radio" name="claim" value="Yes"><span>Yes</span></label><label><input type="radio" name="claim" value="No"><span>No</span></label></div></div>
+    <div class="q"><label for="why">Prove it with one product and your numbers (1–2 sentences).</label><textarea id="why" placeholder="Example: The tablet said 50% off, but compared to Nov 1 it was only…"></textarea></div>
+
+    <div class="sum" id="card">
+      <h2>Black Friday Price Detective</h2>
+      <div class="note" id="sDate"></div>
+      <div><b>Name:</b> <span id="sName">—</span></div>
+      <div><b>Class:</b> <span id="sCls">—</span></div>
+      <div class="row" style="margin-top:8px"><span class="big" id="sScore">0%</span><span id="sCount">0 of 0 answers right</span></div>
+      <table><thead><tr><th>Product</th><th class="r">Right</th><th class="r">Tries</th></tr></thead><tbody id="sRows"></tbody></table>
+      <p><b>Big question:</b> <span id="sClaim">—</span></p>
+      <p><b>Proof:</b> <span id="sWhy">—</span></p>
+    </div>
+    <div id="sendBox" hidden>
+      <button id="send" style="background:var(--blue);color:#fff;font-size:20px;min-height:54px;width:100%">Send my card to Ms. K</button>
+      <p id="sent" class="note" aria-live="polite"></p>
+    </div>
+    <p class="orange">Copy to Session Activity 1 to submit in Canvas</p>
+    <div class="row"><button id="copy">Copy my card</button><span id="copied" class="note"></span></div>
+    <p class="note">Copy didn't work? Take a screenshot of the card and upload it to Session Activity 1 instead.</p>
+
+    <div class="rule" style="margin-top:22px">
+      <h2>What real researchers found</h2>
+      <ul class="facts">
+        <li>A UK consumer group (Which?) checked 175 Black Friday 2024 deals. Every one was the same price or cheaper at some other time within 6 months.</li>
+        <li>A US study (KnownHost) found about 30% of popular tech products got a price hike right before Black Friday, by about 20.5% on average.</li>
+        <li>One 10-inch tablet went from $75 in early November to $139.99 right before Black Friday.</li>
+        <li>But not every deal is fake: in the same study, 42% had steady prices and then a real drop.</li>
+      </ul>
+      <p class="note">Products in this app are simplified versions of real patterns that price trackers reported. Brands are removed and the numbers are rounded to make the math easier.</p>
+    </div>
+  </section>
+</main>
+<button id="calcBtn" aria-expanded="false" aria-controls="calc">Calc</button>
+<div id="calc" hidden role="dialog" aria-label="Calculator">
+  <div class="bar" id="cBar"><span>Calculator</span><button id="cClose" aria-label="Close calculator">Close</button></div>
+  <div id="cExpr" aria-live="polite"></div>
+  <div id="cOut">0</div>
+  <div id="keys"></div>
+</div>
+<footer class="wrap">Ms. Strigina's Math · Tip: before you buy, look up the price history on a tracker like camelcamelcamel or Keepa.</footer>
+
+<script>
+{
+const D=["Sep 1","Sep 15","Oct 1","Oct 15","Nov 1","Nov 15","Black Fri"];
+const DS=["9/1","9/15","10/1","10/15","11/1","11/15","BF"];
+const P=[
+ {id:"fry",part:1,name:"Air fryer",h:[100,100,100,100,100,125,95],was:125,adv:24,reg:100,real:5,up:"Yes",v:"Fake"},
+ {id:"hp",part:1,name:"Headphones",h:[150,150,150,150,150,150,105],was:150,adv:30,reg:150,real:30,up:"No",v:"Real"},
+ {id:"tab",part:1,name:"10-inch tablet",h:[80,75,75,75,75,140,70],was:140,adv:50,reg:75,real:6.7,up:"Yes",v:"Fake"},
+ {id:"ctl",part:1,name:"Game controller",h:[60,60,60,60,60,60,60],was:80,adv:25,reg:60,real:0,up:"No",v:"Fake",tip:"Look closely: was the \"Was\" price ever on the chart?"},
+ {id:"tv",part:2,name:"55-inch TV",h:[250,250,280,320,360,400,300],was:400,adv:25,reg:250,real:-20,up:"Yes",v:"Fake"},
+ {id:"coat",part:2,name:"Winter coat",h:[120,120,120,120,120,120,72],was:120,adv:40,reg:120,real:40,up:"No",v:"Real"},
+ {id:"bud",part:2,name:"Wireless earbuds",h:[50,50,50,40,40,50,45],was:50,adv:10,reg:40,real:-12.5,up:"Yes",v:"Fake"}
+];
+/* Paste your Google Apps Script web app URL (ends in /exec) between the quotes. */
+const SHEET_URL="https://script.google.com/macros/s/AKfycbxUDZaxG_qlL4fzBQRUvgsEXzMAvyLf9nL1EsrxG4FbEX2QBQAqx-cfWtKsGmhRv6dmPA/exec";
+const KEY="bf-detective-v1";
+const CLASSES=["Pre-Algebra","Algebra 1","Geometry","Algebra 2","Other"];
+let S={};try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){S={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const f=x=>{const r=Math.round(x*10)/10;return (Object.is(r,-0)?0:r).toString()};
+const now=p=>p.h[6];
+
+function cardHTML(p,i){
+  const n=P.filter(q=>q.part===p.part).indexOf(p)+1;
+  const regQ=p.part===1?"compared to the Nov 1 price":"compared to the lowest price before Black Friday";
+  return `<article class="card" id="c-${p.id}">
+  <div class="top"><h3>${n}. ${p.name}</h3><div class="tag">Was <s>$${p.was}</s> · Now $${now(p)}</div></div>
+  <div class="fig"><svg data-i="${i}" aria-label="Price history for ${p.name}"></svg></div>
+  <p class="note">Price on each date. The red dot is Black Friday.</p>
+  <div class="q"><label for="${p.id}-adv">a) Advertised % off (use the tag)</label><div class="row"><input type="number" inputmode="decimal" step="any" id="${p.id}-adv"> %</div></div>
+  <div class="q"><label for="${p.id}-real">b) Real % off, ${regQ}</label><div class="row"><input type="number" inputmode="decimal" step="any" id="${p.id}-real"> %</div></div>
+  <div class="q"><span class="lab">c) Did the store raise the price before Black Friday?</span><div class="pick">${["Yes","No"].map(o=>`<label><input type="radio" name="${p.id}-up" value="${o}"><span>${o}</span></label>`).join("")}</div></div>
+  <div class="q"><span class="lab">d) Verdict</span><div class="pick">${["Real","Fake"].map(o=>`<label><input type="radio" name="${p.id}-v" value="${o}"><span>${o} deal</span></label>`).join("")}</div></div>
+  <button data-check="${i}">Check my answers</button>
+  <div class="fb" id="fb-${p.id}" aria-live="polite"></div>
+</article>`;
+}
+$("clsPick").innerHTML=CLASSES.map(c=>`<label><input type="radio" name="cls" value="${c}"><span>${c}</span></label>`).join("");
+$("list1").innerHTML=P.map((p,i)=>p.part===1?cardHTML(p,i):"").join("");
+$("list2").innerHTML=P.map((p,i)=>p.part===2?cardHTML(p,i):"").join("");
+
+function draw(s){
+  const p=P[+s.dataset.i],W=s.clientWidth,H=s.clientHeight;if(!W)return;
+  const sm=W<520,L=8,R=8,T=24,B=26;
+  const lo=Math.min(...p.h),hi=Math.max(...p.h,p.was);
+  const pad=(hi-lo)*.25||hi*.2,y0=Math.max(0,lo-pad),y1=hi+pad*.6;
+  const X=i=>L+(W-L-R)*(i+.5)/7,Y=v=>T+(H-T-B)*(1-(v-y0)/(y1-y0));
+  const pts=p.h.map((v,i)=>`${X(i)},${Y(v)}`).join(" ");
+  const lab=sm?DS:D;
+  let g=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="var(--line)"/>`;
+  g+=`<polyline points="${pts}" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linejoin="round"/>`;
+  p.h.forEach((v,i)=>{const bf=i===6;
+    g+=`<circle cx="${X(i)}" cy="${Y(v)}" r="${bf?7:5}" fill="${bf?"var(--red)":"var(--blue)"}" stroke="var(--bg)" stroke-width="2"/>`;
+    g+=`<text x="${X(i)}" y="${Y(v)-11}" text-anchor="middle" font-size="${sm?12:13}" font-weight="800" fill="${bf?"var(--red)":"var(--ink)"}">$${v}</text>`;
+    g+=`<text x="${X(i)}" y="${H-7}" text-anchor="middle" font-size="${sm?11:12}" fill="var(--mute)">${lab[i]}</text>`;});
+  s.innerHTML=g;
+}
+const ro=new ResizeObserver(es=>es.forEach(e=>draw(e.target)));
+document.querySelectorAll(".fig>svg").forEach(s=>ro.observe(s));
+
+function readP(p){
+  const a=$(p.id+"-adv").value,r=$(p.id+"-real").value;
+  const u=document.querySelector(`input[name="${p.id}-up"]:checked`),v=document.querySelector(`input[name="${p.id}-v"]:checked`);
+  return {adv:a,real:r,up:u?u.value:"",v:v?v.value:""};
+}
+function restore(){
+  P.forEach(p=>{const a=(S[p.id]||{}).a;if(!a)return;
+    $(p.id+"-adv").value=a.adv||"";$(p.id+"-real").value=a.real||"";
+    ["up","v"].forEach(k=>{const el=document.querySelector(`input[name="${p.id}-${k}"][value="${a[k]}"]`);if(el)el.checked=true});
+    if(S[p.id].res)feedback(p,S[p.id].res);});
+  $("nm").value=S.name||"";$("why").value=S.why||"";
+  const c=document.querySelector(`input[name="claim"][value="${S.claim}"]`);if(c)c.checked=true;
+  const k=[...document.querySelectorAll('input[name="cls"]')].find(x=>x.value===S.cls);if(k)k.checked=true;
+  $("clsOther").value=S.clsOther||"";
+}
+const near=(x,t)=>x!==""&&!isNaN(+x)&&Math.abs(+x-t)<=1;
+function grade(p,a){return{adv:near(a.adv,p.adv),real:near(a.real,p.real),up:a.up===p.up,v:a.v===p.v}}
+function feedback(p,res){
+  const nw=now(p),base=p.part===1?"Nov 1 price":"lowest price before";
+  const lines=[
+   [res.adv,"a) Advertised % off",`Try (${p.was} − ${nw}) ÷ ${p.was} × 100`],
+   [res.real,"b) Real % off",`Find the ${base} on the chart ($${p.reg}). Try (${p.reg} − ${nw}) ÷ ${p.reg} × 100`],
+   [res.up,"c) Price raised?",p.tip||"Follow the line from left to right. Did it go up before the red dot?"],
+   [res.v,"d) Verdict","Is your real % off 10 or more? Then real. If not, fake."]];
+  const all=lines.every(l=>l[0]);
+  $("fb-"+p.id).innerHTML=lines.map(([ok,t,h])=>`<div class="${ok?"y":"n"}">${ok?"✓":"✗"} ${t}${ok?"":` <span style="color:var(--ink);font-weight:400">· ${h}</span>`}</div>`).join("")+
+   (all?`<div class="y">All right! Advertised ${f(p.adv)}% off, real ${f(p.real)}%. ${p.v==="Real"?"This one is a real deal.":"This one is a fake deal."}</div>`:"");
+  $("c-"+p.id).classList.toggle("done",all);
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-check]");if(!b)return;
+  const p=P[+b.dataset.check],a=readP(p),res=grade(p,a);
+  const o=S[p.id]||{tries:0};o.tries=(o.tries||0)+1;o.a=a;o.res=res;S[p.id]=o;save();feedback(p,res);summary();
+});
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="nm")S.name=t.value;else if(t.id==="why")S.why=t.value;else if(t.name==="claim")S.claim=t.value;else if(t.name==="cls")S.cls=t.value;else if(t.id==="clsOther")S.clsOther=t.value;
+  else{const p=P.find(q=>t.id&&t.id.startsWith(q.id+"-")||t.name&&t.name.startsWith(q.id+"-"));if(p){S[p.id]=S[p.id]||{tries:0};S[p.id].a=readP(p)}}
+  save();summary();
+});
+const clsName=()=>S.cls==="Other"?((S.clsOther||"").trim()?"Other: "+S.clsOther.trim():""):(S.cls||"");
+function summary(){
+  $("otherQ").hidden=S.cls!=="Other";
+  let right=0,total=0;const rows=[];
+  P.forEach(p=>{const o=S[p.id];if(!o||!o.res)return;const r=Object.values(o.res).filter(Boolean).length;right+=r;total+=4;rows.push([p.part+". "+p.name,r+"/4",o.tries])});
+  const p2=P.some(p=>p.part===2&&S[p.id]&&S[p.id].res);total=4*P.filter(p=>p.part===1||p2).length;
+  const bonus=(S.name||"").trim()&&clsName()?1:0;right+=bonus;total+=1;
+  $("sScore").textContent=Math.round(right/total*100)+"%";
+  $("sCount").textContent=`${right} of ${total} points · ${rows.length} of ${P.length} products checked${bonus?" · +1 sign-in point":""}`;
+  const tb=$("sRows");tb.textContent="";
+  rows.forEach(r=>{const tr=document.createElement("tr");r.forEach((c,i)=>{const td=document.createElement("td");td.textContent=c;if(i)td.className="r";tr.appendChild(td)});tb.appendChild(tr)});
+  if(!rows.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=3;td.textContent="No products checked yet.";tr.appendChild(td);tb.appendChild(tr)}
+  $("sName").textContent=S.name||"—";$("sCls").textContent=clsName()||"—";$("sClaim").textContent=S.claim||"—";$("sWhy").textContent=S.why||"—";
+  $("sDate").textContent=new Date().toLocaleString([], {weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+  return {right,total,rows};
+}
+$("copy").addEventListener("click",async()=>{
+  const s=summary();
+  const txt=`Black Friday Price Detective\nName: ${S.name||""}\nClass: ${clsName()}\nScore: ${$("sScore").textContent} (${s.right}/${s.total})\n`+s.rows.map(r=>`${r[0]}: ${r[1]} (tries ${r[2]})`).join("\n")+`\nBig question: ${S.claim||""}\nProof: ${S.why||""}`;
+  try{await navigator.clipboard.writeText(txt);$("copied").textContent="Copied! Now paste it into Session Activity 1 in Canvas."}catch(e){$("copied").textContent="Copy didn't work here. Take a screenshot instead."}
+});
+$("sendBox").hidden=!SHEET_URL;
+$("send").addEventListener("click",async()=>{
+  const s=summary(),msg=$("sent");
+  if(!(S.name||"").trim()||!clsName()){msg.textContent="Type your name and pick your class at the top of Part 1 first.";return}
+  const data={name:S.name.trim(),cls:clsName(),score:$("sScore").textContent,points:s.right+"/"+s.total,checked:s.rows.length+"/"+P.length,claim:S.claim||"",why:S.why||"",
+    products:P.map(p=>{const o=S[p.id];return o&&o.res?Object.values(o.res).filter(Boolean).length+"/4 ("+o.tries+" tries)":""})};
+  $("send").disabled=true;msg.textContent="Sending…";
+  try{await fetch(SHEET_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+    msg.textContent="Sent at "+new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})+". Now also copy it to Session Activity 1 below.";}
+  catch(e){msg.textContent="Couldn't send from here. Use Copy my card below instead."}
+  $("send").disabled=false;
+});
+function route(){
+  const v=["part1","part2","submit"].includes(location.hash.slice(1))?location.hash.slice(1):"part1";
+  ["part1","part2","submit"].forEach(k=>$("v-"+k).hidden=k!==v);
+  document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
+  document.querySelectorAll(".fig>svg").forEach(draw);
+}
+window.addEventListener("hashchange",()=>{route();window.scrollTo(0,0)});
+restore();summary();route();
+
+/* floating calculator */
+const K=["C","(",")","÷","7","8","9","×","4","5","6","−","1","2","3","+","0",".","⌫","="];
+$("keys").innerHTML=K.map(k=>`<button type="button" data-k="${k}" class="${k==="="?"eq":"÷×−+".includes(k)?"op":""}">${k}</button>`).join("");
+let ex="",done=false;
+function calc(s){
+  const t=s.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").match(/\d*\.?\d+|[-+*/()]/g)||[];let i=0;
+  const num=()=>{const x=t[i++];if(x==="(") {const v=add();if(t[i++]!==")")throw 0;return v}if(x==="-")return -num();if(x===undefined||isNaN(+x))throw 0;return +x};
+  const mul=()=>{let v=num();while(t[i]==="*"||t[i]==="/"){const o=t[i++],r=num();v=o==="*"?v*r:v/r}return v};
+  const add=()=>{let v=mul();while(t[i]==="+"||t[i]==="-"){const o=t[i++],r=mul();v=o==="+"?v+r:v-r}return v};
+  const v=add();if(i<t.length||!isFinite(v))throw 0;return Math.round(v*1e6)/1e6;
+}
+function show(){$("cOut").textContent=ex||"0"}
+function press(k){
+  if(k==="C"){ex="";$("cExpr").textContent="";done=false}
+  else if(k==="⌫"){ex=ex.slice(0,-1);done=false}
+  else if(k==="="){try{const v=calc(ex);$("cExpr").textContent=ex+" =";ex=String(v);done=true}catch(e){$("cExpr").textContent="Check your numbers"}}
+  else{if(done&&/[\d.]/.test(k))ex="";done=false;ex+=k}
+  show();
+}
+$("keys").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(b)press(b.dataset.k)});
+const open=o=>{$("calc").hidden=!o;$("calcBtn").setAttribute("aria-expanded",o)};
+$("calcBtn").addEventListener("click",()=>open($("calc").hidden));
+$("cClose").addEventListener("click",()=>open(false));
+document.addEventListener("keydown",e=>{
+  if($("calc").hidden||/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;
+  const m={"*":"×","/":"÷","-":"−","Enter":"=","Backspace":"⌫","Escape":"C"},k=m[e.key]||e.key;
+  if(K.includes(k)){e.preventDefault();press(k)}
+});
+/* drag the calculator by its title bar */
+let dx=0,dy=0,drag=false;
+$("cBar").addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;const r=$("calc").getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;drag=true;$("cBar").setPointerCapture(e.pointerId)});
+$("cBar").addEventListener("pointermove",e=>{if(!drag)return;const c=$("calc"),w=c.offsetWidth,h=c.offsetHeight;
+  c.style.left=Math.min(Math.max(0,e.clientX-dx),innerWidth-w)+"px";c.style.top=Math.min(Math.max(0,e.clientY-dy),innerHeight-h)+"px";c.style.right="auto";c.style.bottom="auto"});
+$("cBar").addEventListener("pointerup",()=>drag=false);
+}
+</script>
+</body>
+</html>
